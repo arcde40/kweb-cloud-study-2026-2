@@ -1,0 +1,16 @@
+{
+  "name": "kweb-cloud-study-sample",
+  "version": "1.0.0",
+  "description": "KWEB Cloud Study 2026-2 Week 1 sample app",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
