@@ -1,0 +1,6 @@
+# Spring PetClinic — 한 단계 (비교용: docker build -f Dockerfile.single -t petclinic:single .)
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY . .
+RUN ./mvnw -B package -DskipTests
+CMD ["sh", "-c", "java -jar target/*.jar"]
