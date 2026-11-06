@@ -1,0 +1,17 @@
+# 스케일 아웃용 덮어쓰기 파일
+#   docker compose -f compose.yaml -f compose.scale.yaml up -d --scale app=3
+#
+# app의 호스트 포트를 지우고(!reset), 앞에 nginx(lb)를 세워서 내 포트로 받습니다.
+services:
+  app:
+    ports: !reset []
+
+  lb:
+    image: nginx:alpine
+    ports:
+      - "${PORT:-3000}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    restart: on-failure   # app의 DNS가 아직 안 잡혔을 때 nginx가 죽으면 다시 시도

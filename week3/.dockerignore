@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.env
+*.log
+*.tar
+Dockerfile*
+.dockerignore
+compose*.yaml
+nginx.conf
+README.md
