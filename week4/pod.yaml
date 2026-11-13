@@ -1,0 +1,23 @@
+# 가장 작은 단위: Pod 하나 = 컨테이너 하나(이번엔)
+#   kubectl apply -f pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello
+  labels:
+    app: hello
+spec:
+  containers:
+    - name: app
+      image: ghcr.io/arcde40/kweb-week3:latest   # 3주차 과제를 했다면 내 이미지로
+      ports:
+        - containerPort: 3000
+      env:
+        - name: GREETING
+          value: "Hello from a Pod!"
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
