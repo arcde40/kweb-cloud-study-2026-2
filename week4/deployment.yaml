@@ -1,0 +1,30 @@
+# "이 Pod을 항상 3개 유지해 줘"
+#   kubectl apply -f deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web            # 이 라벨이 붙은 Pod을 내 것으로 센다
+  template:               # ↓ 여기부터는 pod.yaml의 metadata + spec과 같은 모양
+    metadata:
+      labels:
+        app: web          # selector와 반드시 일치
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/arcde40/kweb-week3:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GREETING
+              value: "v1"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
