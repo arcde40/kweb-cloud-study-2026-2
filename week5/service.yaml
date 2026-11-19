@@ -1,0 +1,12 @@
+# app Pod들 앞에 고정 주소 하나: 이름은 "app", 포트 80 → Pod의 3000
+#   kubectl apply -f service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+spec:
+  selector:
+    app: web            # 이 라벨이 붙은 Pod들에게 나눠 보냄 (deployment.yaml의 template 라벨)
+  ports:
+    - port: 80          # Service가 받는 포트  → http://app 또는 http://app:80
+      targetPort: 3000  # Pod(컨테이너)가 듣는 포트

@@ -1,0 +1,66 @@
+# Postgres 한 대: 디스크(PVC) + 실행(Deployment) + 이름(Service)
+# 비밀번호 Secret은 파일에 두지 않고 명령으로 만듭니다 (README 미션 2)
+#   kubectl apply -f db.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-data
+spec:
+  accessModes: [ReadWriteOnce]       # 한 노드에서만 붙일 수 있음
+  storageClassName: local-path       # k3s 기본: 노드의 디스크 폴더를 떼어 줌
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1                        # DB는 하나만 (여러 개로 늘리면 안 됨!)
+  strategy:
+    type: Recreate                   # 새 Pod을 띄우기 전에 옛 Pod을 먼저 내림 (디스크를 동시에 못 씀)
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db
+                  key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: db-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  selector:
+    app: db
+  ports:
+    - port: 5432

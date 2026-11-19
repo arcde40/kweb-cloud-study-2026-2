@@ -1,0 +1,40 @@
+# 지난주 deployment.yaml + 설정은 ConfigMap에서, DB 비밀번호는 Secret에서
+#   kubectl apply -f deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/arcde40/kweb-week3:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: app-config         # GREETING 등 ConfigMap의 키가 전부 환경변수로
+          env:
+            - name: DB_HOST
+              value: db                  # ← Service 이름. CoreDNS가 IP로 바꿔 줌
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db               # kubectl create secret generic db ...
+                  key: password
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
