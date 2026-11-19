@@ -1,0 +1,7 @@
+# 이미지와 분리된 설정. 바꾸면 Pod을 다시 띄워야 반영됩니다 (kubectl rollout restart deploy/app)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  GREETING: "Hello from Kubernetes!"
